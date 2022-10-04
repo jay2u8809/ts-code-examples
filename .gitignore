@@ -27,6 +27,7 @@ lerna-debug.log*
 *.launch
 .settings/
 *.sublime-workspace
+local.properties
 
 # IDE - VSCode
 .vscode/*
@@ -37,3 +38,24 @@ lerna-debug.log*
 
 # Node.js
 *-lock.json
+
+# React Native
+**/.gradle/**
+**/build/**
+**/ios/Pods/**
+**/jni/**
+Podfile.lock
+
+# BUCK
+buck-out/
+\.buckd/
+*.keystore
+
+# Xcode
+project.xcworkspace
+/*.xcodeproj
+
+*.apk
+**/bin/*
+**/gen/**
+**/out/**
