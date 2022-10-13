@@ -1,12 +1,17 @@
 import React from 'react';
-import {Button, SafeAreaView, ScrollView, StatusBar, StyleSheet, TextInput, useColorScheme, View} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {SafeAreaView, ScrollView, StatusBar, StyleSheet, TextInput, View} from 'react-native';
 import {ScreenNames} from '../../common/navigation/Navigation';
-import {backgroundColorByDarkMode} from "../../common/styles/back-ground.styles";
-import {barStyleByDarkMode} from "../../common/styles/bar.styles";
+import {ColorModeStyles} from "../../common/styles/color-mode.styles";
 import {LoginService} from '../service/login.service';
+import LoginInput from '../component/LoginInputComponent';
+import {ButtonViews} from '../../common/component/ButtonComponent';
 
 const TAG = 'LoginScreen';
+
+const words = {
+  ID: 'id',
+  PASSWORD: 'password',
+};
 
 /**
  * Login Screen
@@ -17,10 +22,9 @@ const Login = ({navigation}: any) => {
   const [userId, setUserId] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
 
-  const handleLoginBtn = async () => {
+  const handleLoginBtn = async (): Promise<void> => {
     // console.debug(TAG, 'handle-login-btn', userId, password);
-    const service: LoginService = new LoginService();
-    const result = await service.login(userId, password);
+    const result = await LoginService.login(userId, password);
     console.log(TAG, 'login-result', result);
     if (result) {
       handleResetBtn();
@@ -30,32 +34,32 @@ const Login = ({navigation}: any) => {
     console.log(TAG, 'login-fail');
   };
 
-  const handleResetBtn = () => {
-    // console.debug(TAG, 'handle-reset-btn-pre', userId, password);
+  const handleResetBtn = (): void => {
+    console.debug(TAG, 'handle-reset-btn-pre', userId, password);
     setUserId('');
     setPassword('');
+    navigation.navigate(ScreenNames.RESET_PASSWORD);
   };
 
   return (
-    <SafeAreaView style={backgroundColorByDarkMode()}>
+    <SafeAreaView style={ColorModeStyles.viewBackgroundColorByMode()}>
       <StatusBar
-        barStyle={barStyleByDarkMode()}
-        backgroundColor={backgroundColorByDarkMode().backgroundColor}
+        barStyle={ColorModeStyles.barStyleByMode()}
+        backgroundColor={ColorModeStyles.viewBackgroundColorByMode().backgroundColor}
       />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundColorByDarkMode()}>
+        style={ColorModeStyles.viewBackgroundColorByMode()}>
         {/*TODO Login Logo*/}
         <View
-          style={[backgroundColorByDarkMode(), styles.sectionContainer]}>
+          style={[styles.sectionContainer, ColorModeStyles.viewBackgroundColorByMode()]}>
+          {/* id input */}
           <TextInput
-            placeholder={'ID'}
-            nativeID={'userId'}
+            placeholder={words.ID.toUpperCase()}
+            nativeID={words.ID}
             value={userId}
             style={[
-              styles.sectionTitle, {
-                color : useColorScheme() === 'dark' ? Colors.white : Colors.black,
-              },
+              styles.sectionTitle, ColorModeStyles.textColorByMode()
             ]}
             onChangeText={(event: string) => {
               // console.debug(TAG, 'input-id', event);
@@ -63,30 +67,28 @@ const Login = ({navigation}: any) => {
             }}
           >
           </TextInput>
+          {/* password input */}
           <TextInput
-            placeholder={'PASSWORD'}
-            nativeID={'password'}
+            placeholder={words.PASSWORD.toUpperCase()}
+            nativeID={words.PASSWORD}
             value={password}
             secureTextEntry={true}
             style={[
-              styles.sectionTitle, {
-                color : useColorScheme() === 'dark' ? Colors.white : Colors.black,
-              }
+              styles.sectionTitle, ColorModeStyles.textColorByMode()
             ]}
             onChangeText={(event: string) => {
               // console.debug(TAG, 'input-password', event);
               setPassword(event);
             }}
-            // onTextInput={(event: any) => {
-            //   // console.debug(TAG, 'input-password', event);
-            // }}
           >
           </TextInput>
-          <Button title={'LOGIN'} onPress={handleLoginBtn} />
-          <Button title={'RESET'} onPress={handleResetBtn}></Button>
-          {/*<LoginInput*/}
-          {/*  navigation={navigation}*/}
-          {/*/>*/}
+          {/* Buttons */}
+          {
+            ButtonViews.generateButtons([
+              {key: 'login', method: handleLoginBtn},
+              {key: 'reset', method: handleResetBtn},
+            ])
+          }
         </View>
       </ScrollView>
     </SafeAreaView>
